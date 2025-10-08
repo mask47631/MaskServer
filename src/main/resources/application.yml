@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: MaskServer
+  datasource:
+    url: jdbc:mysql://localhost:3306/mask47631?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+    username: root
+    password: Mask47631
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 47631
+
+app:
+  version: "@project.version@"
+
+token:
+  secret: MaskSecretKey123456 # 16位密钥，AES-128
+  expire-minutes: 4320 # token过期时间，单位分钟
+
+mail:
+  host: smtp.qq.com
+  port: 465
+  username: your@qq.com
+  password: your_smtp_auth_code
+  from: your@qq.com
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

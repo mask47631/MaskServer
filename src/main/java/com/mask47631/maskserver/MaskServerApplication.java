@@ -1,0 +1,48 @@
+package com.mask47631.maskserver;
+
+import com.mask47631.maskserver.entity.User;
+import com.mask47631.maskserver.repository.UserRepository;
+import com.mask47631.maskserver.util.PasswordUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+@SpringBootApplication
+public class MaskServerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MaskServerApplication.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner adminUserInitializer(UserRepository userRepository) {
+        return args -> {
+            if (userRepository.findFirstByRole("admin").isEmpty()) {
+                String password = PasswordUtil.generateRandomPassword(10);
+                String md5Password = PasswordUtil.md5(password);
+                User admin = new User();
+                admin.setUsername("admin");
+                admin.setEmail("admin@admin.admin");
+                admin.setRole("admin");
+                admin.setVerified(false);
+                admin.setDisabled(false);
+                admin.setPassword(md5Password);
+                userRepository.save(admin);
+                try (FileWriter writer = new FileWriter("admin.log", false)) {
+                    writer.write("username: admin@admin.admin"+ System.lineSeparator()+"password: " + password + System.lineSeparator());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+}
