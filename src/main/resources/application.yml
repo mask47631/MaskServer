@@ -10,12 +10,19 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 server:
   port: 47631
 
 app:
   version: "@project.version@"
+  name: "MaskServer"
+  description: "MaskServer"
+  avatarUrl: ""
 
 token:
   secret: MaskSecretKey123456 # 16位密钥，AES-128
@@ -27,6 +34,9 @@ mail:
   username: your@qq.com
   password: your_smtp_auth_code
   from: your@qq.com
+
+file:
+  upload-dir: uploads
 
 springdoc:
   api-docs:

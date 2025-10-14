@@ -3,11 +3,31 @@ package com.mask47631.maskserver.util;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class TokenUtil {
     private static final String ALGORITHM = "AES";
     private static final String SEPARATOR = ":";
+
+    /**
+     * 生成固定长度的AES密钥
+     * @param secret 原始密钥字符串
+     * @return 16字节的AES密钥
+     */
+    private static SecretKeySpec generateKey(String secret) {
+        try {
+            // 使用SHA-256哈希算法生成固定长度的密钥
+            MessageDigest sha = MessageDigest.getInstance("SHA-256");
+            byte[] key = sha.digest(secret.getBytes(StandardCharsets.UTF_8));
+            // 使用前16字节作为AES-128密钥
+            key = java.util.Arrays.copyOf(key, 16);
+            return new SecretKeySpec(key, ALGORITHM);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("生成密钥失败", e);
+        }
+    }
 
     /**
      * 加密生成token，内容为userId:expireTimestamp
@@ -20,7 +40,7 @@ public class TokenUtil {
         try {
             long expireAt = System.currentTimeMillis() + expireMinutes * 60 * 1000;
             String content = userId + SEPARATOR + expireAt;
-            SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+            SecretKeySpec key = generateKey(secret);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             byte[] encrypted = cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
@@ -35,7 +55,7 @@ public class TokenUtil {
      */
     public static String decrypt(String token, String secret) {
         try {
-            SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+            SecretKeySpec key = generateKey(secret);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, key);
             byte[] decoded = Base64.getDecoder().decode(token);

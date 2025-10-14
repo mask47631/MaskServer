@@ -60,7 +60,7 @@ public class UserController {
      * 向用户邮箱发送6位数字验证码
      */
     @Operation(summary = "向用户邮箱发送6位数字验证码")
-    @PostMapping("/sendEmailCode")
+    @GetMapping("/sendEmailCode")
     public ApiResponse<Void> sendEmailCode(HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null) {

@@ -3,6 +3,7 @@ package com.mask47631.maskserver.controller.unauth;
 import com.mask47631.maskserver.entity.User;
 import com.mask47631.maskserver.repository.UserRepository;
 import com.mask47631.maskserver.repository.ConfigRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Tag(name = "登录注册接口", description = "用户登录、注册相关接口")
 @RestController
 @RequestMapping("/unauth")
@@ -36,17 +38,17 @@ public class LoginController {
     @Value("${token.expire-minutes:30}")
     private long tokenExpireMinutes;
 
-    @Operation(summary = "用户登录", description = "管理员登录，返回token和有效期")
+    @Operation(summary = "用户登录", description = "用户登录，返回token和有效期")
     @PostMapping("/login")
     public ApiResponse<Map<String, Object>> login(
-            @Parameter(description = "用户名", required = true) @RequestParam String username,
+            @Parameter(description = "邮箱", required = true) @RequestParam String email,
             @Parameter(description = "密码", required = true) @RequestParam String password) {
-        User user = userRepository.findFirstByRole("admin")
-                .filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password))
+        User user = userRepository.findByEmail(email)
+                .filter(u -> u.getEmail().equals(email) && u.getPassword().equals(password))
                 .orElse(null);
         Map<String, Object> result = new HashMap<>();
         if (user == null) {
-            return ApiResponse.fail("用户名或密码错误");
+            return ApiResponse.fail("邮箱或密码错误");
         } else if (Boolean.TRUE.equals(user.getDisabled())) {
             return ApiResponse.fail("账号已停用");
         } else {

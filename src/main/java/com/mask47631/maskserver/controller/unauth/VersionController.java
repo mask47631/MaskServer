@@ -1,5 +1,6 @@
 package com.mask47631.maskserver.controller.unauth;
 
+import com.mask47631.maskserver.entity.ServiceInfo;
 import com.mask47631.maskserver.util.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "版本接口", description = "获取服务版本号")
+@Tag(name = "版本接口", description = "获取服务信息")
 @RestController
 @RequestMapping("/unauth")
 public class VersionController {
@@ -18,9 +19,26 @@ public class VersionController {
     @Value("${app.version}")
     private String version;
 
-    @Operation(summary = "获取服务版本号", description = "返回当前服务的版本号")
+    @Schema(description = "服务名称")
+    @Value("${app.name}")
+    private String name;
+
+    @Schema(description = "服务描述")
+    @Value("${app.description}")
+    private String description;
+
+    @Schema(description = "服务图标")
+    @Value("${app.avatarUrl}")
+    private String avatarUrl;
+
+    @Operation(summary = "获取服务信息", description = "返回服务版本号、服务名称和服务描述")
     @GetMapping("/version")
-    public ApiResponse<String> getVersion() {
-        return ApiResponse.success(version);
+    public ApiResponse<ServiceInfo> getVersion() {
+        ServiceInfo serviceInfo = new ServiceInfo();
+        serviceInfo.setVersion(version);
+        serviceInfo.setName(name);
+        serviceInfo.setDescription(description);
+        serviceInfo.setAvatarUrl(avatarUrl);
+        return ApiResponse.success(serviceInfo);
     }
 }
