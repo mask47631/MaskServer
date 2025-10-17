@@ -26,7 +26,11 @@ jobs:
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    
+
+    - name: 使用当前时间设置 VERSION
+      run: |
+        echo "VERSION=v$(date -u +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
     - name: 创建Release
       id: create_release
       uses: softprops/action-gh-release@v2
@@ -35,7 +39,7 @@ jobs:
         name: ${{ env.VERSION }}
         draft: false
         prerelease: false
-        files:  |
+        files: |
           ./target/MaskServer.jar
           ./src/main/resources/application.yml
           ./src/main/resources/application-mysql.yml
