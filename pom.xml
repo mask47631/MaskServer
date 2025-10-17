@@ -13,6 +13,7 @@
     <version>v0.0.1</version>
     <name>MaskServer</name>
     <description>MaskServer</description>
+    <packaging>jar</packaging>
     <url/>
     <licenses>
         <license/>
@@ -111,6 +112,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <executable>true</executable>
+                    <outputDirectory>target</outputDirectory>
+                    <finalName>${artifactId}</finalName>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
