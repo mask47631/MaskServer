@@ -26,13 +26,17 @@ jobs:
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-
+    - name: set time
+      run: |
+        TIME="$(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
+        echo "TIME=$TIME" >> $GITHUB_ENV
+    
     - name: 创建Release
       id: create_release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref }}
-        name: ${{ github.ref }}
+        tag_name: ${{ env.TIME }}
+        name: ${{ env.TIME }}
         draft: false
         prerelease: false
         files:  |
