@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.mask47631</groupId>
     <artifactId>MaskServer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>v0.0.1</version>
     <name>MaskServer</name>
     <description>MaskServer</description>
     <url/>
@@ -82,6 +82,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
+        <!-- BT种子解析依赖 -->
+        <dependency>
+            <groupId>com.dampcake</groupId>
+            <artifactId>bencode</artifactId>
+            <version>1.4</version>
         </dependency>
 
     </dependencies>

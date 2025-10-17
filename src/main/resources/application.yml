@@ -2,7 +2,7 @@ spring:
   application:
     name: MaskServer
   profiles:
-    active: mysql
+    active: sqlite
   servlet:
     multipart:
       max-file-size: 10MB

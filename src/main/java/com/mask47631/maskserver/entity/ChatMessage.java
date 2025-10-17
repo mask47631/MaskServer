@@ -67,7 +67,7 @@ public class ChatMessage {
     /**
      * 消息内容
      */
-    @Column(name = "content", length = 1000)
+    @Column(name = "content", length = 10000)
     @Schema(description = "消息内容")
     @Comment("消息内容")
     private String content;
