@@ -31,6 +31,10 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: ${{ env.VERSION }}
+        name: ${{ env.VERSION }}
+        draft: false
+        prerelease: false
         files:  |
           ./target/MaskServer.jar
           ./src/main/resources/application.yml
