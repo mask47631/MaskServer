@@ -50,7 +50,7 @@ public class LoginRequiredAspect {
             if (user == null) {
                 throw new UnauthenticatedException("用户不存在");
             }
-            user.setPassword(null);
+//            user.setPassword(null);
             session.setAttribute("user", user);
         }
         return joinPoint.proceed();

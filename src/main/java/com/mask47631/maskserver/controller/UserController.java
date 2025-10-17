@@ -6,14 +6,17 @@ import com.mask47631.maskserver.entity.User;
 import com.mask47631.maskserver.repository.EmailVerificationCodeRepository;
 import com.mask47631.maskserver.repository.UserRepository;
 import com.mask47631.maskserver.util.ApiResponse;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 import jakarta.mail.internet.MimeMessage;
 
+@Slf4j
 @Tag(name = "用户相关接口", description = "用户信息、邮箱验证码等接口")
 @RestController
 @RequestMapping("/user")
@@ -54,6 +58,44 @@ public class UserController {
         dbUser.setPassword(null);
         session.setAttribute("user", dbUser);
         return ApiResponse.success(dbUser);
+    }
+
+    /**
+     * 修改当前用户的信息
+     */
+    @Operation(summary = "修改当前用户的信息")
+    @PostMapping("/updateSelf")
+    public ApiResponse<User> updateSelf(@RequestBody User updateRequest, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            return ApiResponse.fail("未登录");
+        }
+
+        User user = userRepository.findById(currentUser.getId())
+                .orElse(null);
+        log.info("当前用户: {}", user);
+        if (user == null) {
+            return ApiResponse.fail("用户不存在");
+        }
+
+        // 更新用户信息
+        if (updateRequest.getEmail() != null && !updateRequest.getEmail().isEmpty()) {
+            user.setEmail(updateRequest.getEmail());
+        }
+        if (updateRequest.getAvatarUrl() != null && !updateRequest.getAvatarUrl().isEmpty()) {
+            user.setAvatarUrl(updateRequest.getAvatarUrl());
+        }
+        if (updateRequest.getUsername() != null && !updateRequest.getUsername().isEmpty()) {
+            user.setUsername(updateRequest.getUsername());
+        }
+        if (updateRequest.getPassword() != null && !updateRequest.getPassword().isEmpty() && !"null".equals(updateRequest.getPassword())) {
+            user.setPassword(updateRequest.getPassword());
+        }
+
+        User savedUser = userRepository.save(user);
+        savedUser.setPassword(null);
+        session.setAttribute("user", savedUser);
+        return ApiResponse.success(savedUser);
     }
 
     /**
@@ -115,4 +157,5 @@ public class UserController {
         session.setAttribute("user", user);
         return ApiResponse.success("验证通过", null);
     }
+
 }

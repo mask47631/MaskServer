@@ -4,9 +4,12 @@ import com.mask47631.maskserver.auth.LoginRequired;
 import com.mask47631.maskserver.dto.FileRecordDTO;
 import com.mask47631.maskserver.entity.FileRecord;
 import com.mask47631.maskserver.entity.User;
+import com.mask47631.maskserver.exception.UnauthenticatedException;
 import com.mask47631.maskserver.repository.FileRecordRepository;
+import com.mask47631.maskserver.repository.UserRepository;
 import com.mask47631.maskserver.service.FileService;
 import com.mask47631.maskserver.util.ApiResponse;
+import com.mask47631.maskserver.util.TokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +48,24 @@ public class FileController {
 
     @Value("${file.upload-dir:uploads}")
     private String uploadDir;
+    @Value("${token.expire-minutes:30}")
+    private long tokenExpireMinutes;
+    @Value("${token.secret}")
+    private String tokenSecret;
+    @Autowired
+    private UserRepository userRepository;
 
+    // 检查内容类型是否可内联显示（图片、文本、PDF等）
+    private boolean canInlineDisplay(String contentType) {
+        if (contentType == null) return false;
+        
+        return contentType.startsWith("image/") || 
+               contentType.startsWith("text/") || 
+               "application/pdf".equals(contentType) ||
+               "application/json".equals(contentType) ||
+               contentType.startsWith("video/") ||
+               contentType.startsWith("audio/");
+    }
 
 
     @Operation(summary = "上传文件", description = "上传文件并返回文件链接，默认需要登录才能查看")
@@ -112,11 +132,22 @@ public class FileController {
     }
 
     @Operation(summary = "获取文件（需要登录）", description = "根据文件ID获取文件，需要登录")
-    @GetMapping("/private/{id}")
-    @LoginRequired
+    @GetMapping("/private/{id}/**")
     public ResponseEntity<Resource> privateFile(
             @Parameter(description = "文件ID") @PathVariable Long id,
             HttpServletRequest request) throws IOException {
+        String path = request.getRequestURI();
+        String token = path.substring(("/file/private/" + id + "/").length());
+        String userId;
+        try {
+            userId = TokenUtil.decrypt(token, tokenSecret);
+        } catch (Exception e) {
+            throw new UnauthenticatedException("无效的token");
+        }
+        User user = userRepository.findById(Long.valueOf(userId)).orElse(null);
+        if (user == null) {
+            throw new UnauthenticatedException("用户不存在");
+        }
         try {
             FileRecord fileRecord = fileRecordRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("文件不存在"));
@@ -130,15 +161,19 @@ public class FileController {
             Resource resource = fileService.loadFileAsResource(id, false);
 
             if (resource != null && resource.exists()) {
+                String contentType = fileRecord.getContentType();
+                String disposition = canInlineDisplay(contentType) ? "inline" : "attachment";
+                
                 return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(fileRecord.getContentType()))
+                        .contentType(MediaType.parseMediaType(contentType))
                         .header(HttpHeaders.CONTENT_DISPOSITION,
-                                "attachment; filename=\"" + fileRecord.getOriginalName() + "\"")
+                                disposition + "; filename=\"" + fileRecord.getOriginalName() + "\"")
                         .body(resource);
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -154,10 +189,13 @@ public class FileController {
             Resource resource = fileService.loadFileAsResource(id, true);
 
             if (resource != null && resource.exists()) {
+                String contentType = fileRecord.getContentType();
+                String disposition = canInlineDisplay(contentType) ? "inline" : "attachment";
+                
                 return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(fileRecord.getContentType()))
+                        .contentType(MediaType.parseMediaType(contentType))
                         .header(HttpHeaders.CONTENT_DISPOSITION, 
-                                "attachment; filename=\"" + fileRecord.getOriginalName() + "\"")
+                                disposition + "; filename=\"" + fileRecord.getOriginalName() + "\"")
                         .body(resource);
             } else {
                 return ResponseEntity.notFound().build();
@@ -169,6 +207,7 @@ public class FileController {
 
     @Operation(summary = "修改文件公开属性", description = "修改文件是否需要登录才能查看")
     @PostMapping("/{id}/public")
+    @LoginRequired
     public ApiResponse<FileRecordDTO> updateFilePublicStatus(
             @Parameter(description = "文件ID") @PathVariable Long id,
             @Parameter(description = "是否公开") @RequestParam Boolean isPublic,

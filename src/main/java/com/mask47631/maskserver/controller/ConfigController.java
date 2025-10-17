@@ -52,16 +52,8 @@ public class ConfigController {
     @PostMapping("/save")
     public ApiResponse<Void> saveConfig(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "配置项对象，key为配置名，value为对象{value,remark}")
-            @RequestBody Map<String, Map<String, String>> configs) {
-        for (Map.Entry<String, Map<String, String>> entry : configs.entrySet()) {
-            String key = entry.getKey();
-            Map<String, String> val = entry.getValue();
-            Config config = new Config();
-            config.setKey(key);
-            config.setValue(val.getOrDefault("value", ""));
-            config.setRemark(val.getOrDefault("remark", ""));
-            configRepository.save(config);
-        }
+            @RequestBody List<Config> configs) {
+        configRepository.saveAll(configs);
         return ApiResponse.success("配置已保存", null);
     }
 

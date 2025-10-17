@@ -41,7 +41,7 @@ public class AdminRequiredAspect {
             throw new ForbiddenException("无法获取请求上下文");
         }
         HttpServletRequest request = attrs.getRequest();
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         // token校验
         String token = request.getHeader("Authorization");
         if (token == null || token.isEmpty()) {
