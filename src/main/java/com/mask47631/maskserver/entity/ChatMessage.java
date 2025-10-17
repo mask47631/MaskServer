@@ -18,7 +18,7 @@ public class ChatMessage {
      * 消息ID，自增主键
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     @Schema(description = "消息ID")
     @Comment("消息ID，自增主键")

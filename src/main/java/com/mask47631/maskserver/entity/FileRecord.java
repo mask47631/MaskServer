@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Comment("文件记录表")
 public class FileRecord {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Schema(description = "文件ID")
     private Long id;
 

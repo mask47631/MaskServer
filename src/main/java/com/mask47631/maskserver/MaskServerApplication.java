@@ -3,6 +3,7 @@ package com.mask47631.maskserver;
 import com.mask47631.maskserver.entity.User;
 import com.mask47631.maskserver.repository.UserRepository;
 import com.mask47631.maskserver.util.PasswordUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.io.FileWriter;
 import java.io.IOException;
 
+@Slf4j
 @SpringBootApplication
 public class MaskServerApplication {
 
@@ -31,14 +33,14 @@ public class MaskServerApplication {
                 String md5Password = PasswordUtil.md5(password);
                 User admin = new User();
                 admin.setUsername("admin");
-                admin.setEmail("admin@admin.admin");
+                admin.setEmail("admin@admin");
                 admin.setRole("admin");
                 admin.setVerified(false);
                 admin.setDisabled(false);
                 admin.setPassword(md5Password);
                 userRepository.save(admin);
                 try (FileWriter writer = new FileWriter("admin.log", false)) {
-                    writer.write("username: admin@admin.admin"+ System.lineSeparator()+"password: " + password + System.lineSeparator());
+                    writer.write("username: admin@admin"+ System.lineSeparator()+"password: " + password + System.lineSeparator());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

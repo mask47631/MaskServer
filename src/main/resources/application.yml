@@ -1,15 +1,8 @@
 spring:
   application:
     name: MaskServer
-  datasource:
-    url: jdbc:mysql://localhost:3306/mask47631?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&allowPublicKeyRetrieval=true
-    username: root
-    password: Mask47631
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+  profiles:
+    active: mysql
   servlet:
     multipart:
       max-file-size: 10MB

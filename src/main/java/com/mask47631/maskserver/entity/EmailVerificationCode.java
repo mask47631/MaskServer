@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Schema(description = "邮箱验证码实体")
 public class EmailVerificationCode {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Schema(description = "主键ID")
     private Long id;
 
