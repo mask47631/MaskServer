@@ -7,9 +7,18 @@ spring:
     multipart:
       max-file-size: 10240MB
       max-request-size: 10240MB
+  web:
+    resources:
+      static-locations: file:./web/
 
 server:
   port: 47631
+  ssl:
+    enabled: false
+    key-store-type: PEM
+    key-file: classpath:localhost.key
+    certificate-file: classpath:localhost.crt
+    client-auth: none
 
 app:
   version: "@project.version@"
@@ -33,7 +42,7 @@ file:
 
 springdoc:
   api-docs:
-    enabled: true
+    enabled: false
   swagger-ui:
-    enabled: true
+    enabled: false
     path: /swagger-ui.html
