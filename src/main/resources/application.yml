@@ -9,7 +9,7 @@ spring:
       max-request-size: 10240MB
   web:
     resources:
-      static-locations: file:./web/
+      static-locations: file:./web/dist/
 
 server:
   port: 47631
@@ -25,6 +25,8 @@ app:
   name: "MaskServer"
   description: "MaskServer"
   avatarUrl: ""
+  autoGetWeb: true
+
 
 token:
   secret: MaskSecretKey123456 # 16位密钥，AES-128
