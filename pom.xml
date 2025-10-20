@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.mask47631</groupId>
     <artifactId>MaskServer</artifactId>
-    <version>v0.0.1</version>
+    <version>${revision}</version>
     <name>MaskServer</name>
     <description>MaskServer</description>
     <packaging>jar</packaging>
@@ -29,6 +29,7 @@
     </scm>
     <properties>
         <java.version>24</java.version>
+        <revision>v0.0.1</revision>
     </properties>
     <dependencies>
         <dependency>
