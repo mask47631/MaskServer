@@ -4,10 +4,6 @@ FROM openjdk:24-jdk-slim
 # 设置工作目录
 WORKDIR /app
 
-# 添加构建时间参数，格式为 yyyyddmmhhmm
-ARG BUILD_TIME
-ENV BUILD_TIME=${BUILD_TIME:-yyyyMMddHHmm}
-
 # 复制Maven构建文件
 COPY pom.xml .
 
@@ -16,7 +12,7 @@ COPY src ./src
 
 # 构建应用
 RUN apt-get update && apt-get install -y maven && \
-    mvn -Drevision=Docker$BUILD_TIME clean package -DskipTests
+    mvn -Drevision=$(date -u +%Y%m%d%H%M%S) clean package -DskipTests
 
 # 暴露端口
 EXPOSE 47631
