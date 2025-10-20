@@ -12,7 +12,7 @@ COPY src ./src
 
 # 构建应用
 RUN apt-get update && apt-get install -y maven && \
-    mvn -Drevision=$(date -u +%Y%m%d%H%M%S) clean package -DskipTests
+    mvn -Drevision=Docker$(date -u +%Y%m%d%H%M%S) clean package -DskipTests
 
 # 暴露端口
 EXPOSE 47631
