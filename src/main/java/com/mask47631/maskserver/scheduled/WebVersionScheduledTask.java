@@ -76,10 +76,13 @@ public class WebVersionScheduledTask {
                             // 删除临时zip文件
                             Files.deleteIfExists(Paths.get(zipFilePath));
                             log.info("临时文件dist.zip已删除");
-
-                            FileWriter writer = new FileWriter("web.version", false);
-                            writer.write(tagName);
-                            log.info("成功获取并记录Web版本信息: {}", tagName);
+                            log.info("成功获取: {}", tagName);
+                            try (FileWriter writer = new FileWriter("web.version", false);) {
+                                writer.write(tagName);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                log.error("写入web.version文件时发生错误", e);
+                            }
                         } catch (IOException e) {
                             log.error("下载Web文件时发生错误", e);
                         }
