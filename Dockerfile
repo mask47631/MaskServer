@@ -21,6 +21,7 @@ EXPOSE 47631
 
 # 创建volume用于持久化SQLite数据库和上传文件
 VOLUME ["/app/data"]
-RUN cd /app/data
+
+WORKDIR /app/data
 # 运行应用
 ENTRYPOINT ["java", "-jar", "../target/MaskServer.jar"]
