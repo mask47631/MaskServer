@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y maven && \
 EXPOSE 47631
 
 # 创建volume用于持久化SQLite数据库和上传文件
-VOLUME ["/app/uploads", "/app/maskserver.db"]
-
+VOLUME ["/app/data"]
+RUN cd /app/data
 # 运行应用
-ENTRYPOINT ["java", "-jar", "target/MaskServer.jar"]
+ENTRYPOINT ["java", "-jar", "../target/MaskServer.jar"]

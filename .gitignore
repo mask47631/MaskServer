@@ -33,6 +33,5 @@ build/
 .vscode/
 
 uploads
-web.version
 web
 admin.log
