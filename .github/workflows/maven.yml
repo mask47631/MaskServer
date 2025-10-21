@@ -42,5 +42,3 @@ jobs:
         files: |
           ./target/MaskServer.jar
           ./src/main/resources/application.yml
-          ./src/main/resources/application-mysql.yml
-          ./src/main/resources/application-sqlite.yml
