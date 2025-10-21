@@ -160,21 +160,26 @@ public class FileController {
 
             Resource resource = fileService.loadFileAsResource(id, false);
 
-            if (resource != null && resource.exists()) {
-                String contentType = fileRecord.getContentType();
-                String disposition = canInlineDisplay(contentType) ? "inline" : "attachment";
-                
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(contentType))
-                        .header(HttpHeaders.CONTENT_DISPOSITION,
-                                disposition + "; filename=\"" + fileRecord.getOriginalName() + "\"")
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return getResourceResponseEntity(fileRecord, resource);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    private ResponseEntity<Resource> getResourceResponseEntity(FileRecord fileRecord, Resource resource) {
+        if (resource != null && resource.exists()) {
+            String contentType = fileRecord.getContentType();
+            String disposition = canInlineDisplay(contentType) ? "inline" : "attachment";
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            disposition + "; filename=\"" + fileRecord.getOriginalName() + "\"")
+                    .header(HttpHeaders.CACHE_CONTROL,"public, max-age=31536000")
+                    .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -188,18 +193,7 @@ public class FileController {
 
             Resource resource = fileService.loadFileAsResource(id, true);
 
-            if (resource != null && resource.exists()) {
-                String contentType = fileRecord.getContentType();
-                String disposition = canInlineDisplay(contentType) ? "inline" : "attachment";
-                
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(contentType))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, 
-                                disposition + "; filename=\"" + fileRecord.getOriginalName() + "\"")
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return getResourceResponseEntity(fileRecord, resource);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
