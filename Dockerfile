@@ -10,6 +10,8 @@ COPY pom.xml .
 # 复制源代码
 COPY src ./src
 
+COPY data ./data
+
 # 构建应用
 RUN apt-get update && apt-get install -y maven && \
     mvn -Drevision=Docker$(date -u +%Y%m%d%H%M%S) clean package -DskipTests
