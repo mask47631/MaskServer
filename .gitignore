@@ -35,3 +35,4 @@ build/
 uploads
 web
 admin.log
+web.version

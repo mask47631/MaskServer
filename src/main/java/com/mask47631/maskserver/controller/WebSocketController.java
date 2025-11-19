@@ -41,10 +41,13 @@ public class WebSocketController {
         message.setFromName(username);
         message.setFromAvatar(avatarUrl);
         message.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
-        // 保存消息到数据库
-        chatMessageRepository.save(message);
-
+        if(message.getMessageType() == null || message.getMessageType().isEmpty()) {
+            message.setMessageType("chat");
+        }
+        if (!"webrtc".equals(message.getMessageType())) {
+            // 保存消息到数据库
+            chatMessageRepository.save(message);
+        }
         // 广播消息
         messagingTemplate.convertAndSend("/topic/messages", message);
     }

@@ -88,4 +88,12 @@ public class ChatMessage {
     @Schema(description = "创建时间")
     @Comment("创建时间")
     private LocalDateTime createdAt;
+
+    /**
+     * 消息类型
+     */
+    @Column(name = "message_type")
+    @Schema(description = "消息类型")
+    @Comment("消息类型")
+    private String messageType;
 }
