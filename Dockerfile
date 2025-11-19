@@ -1,5 +1,5 @@
 # 使用支持Java 24的基础镜像
-FROM openjdk:24-jdk-slim
+FROM openjdk:26-ea-24-jdk-trixie
 
 # 设置工作目录
 WORKDIR /app

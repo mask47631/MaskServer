@@ -1,6 +1,7 @@
 # 一个用于内网互传文件和消息的工具
+Java 24
 
-默认状态使用sqllite，如有需要可以修改yml使用Mysql
+默认状态使用sqlite，如有需要可以修改yml使用Mysql
 
 ## 打包
 ```shell
